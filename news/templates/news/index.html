@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Keyword Tracker</title>
+        <style>
+            h1 {
+                text-align: center;
+            }
+            .card {
+                text-align: center;
+            }
+            .subcard {
+                display: inline-block;
+                width: 30vw;
+                text-align: center
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Keyword Tracker MAXX</h1>
+
+        <div class='topcombined'>
+            <h2>Top Keywords Today</h2>
+            <ol>
+                {% for word in topcombined %}
+                <li>{{ word }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class='topnew'>
+            <h2>Top NEW Today</h2> 
+            <ol>
+                <li>Willing</li>
+                <li>War</li>
+                <li>Space</li>
+                <li>Bitcoin</li>
+                <li>far</li>
+                <li>Punish</li>
+            </ol>
+        </div>
+
+        <div class='card topCanada'>
+            <h2>Canada</h2>
+            <div class='subcard cbc'>
+                <h3>CBC Top Keywords</h3>
+                <ol>
+                    {% for word in cbc %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class='subcard ctv'>
+                <h3>CTV Top Keywords</h3>
+                <ol>
+                    {% for word in ctv %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class='subcard global'>
+                <h3>Global News Top Keywords</h3>
+                <ol>
+                    {% for word in global %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+
+        <div class='card topUnitedstates'>
+            <h2>United States</h2>
+            <div class='subcard cbs'>
+                <h3>CBS Top Keywords</h3>
+                <ol>
+                    {% for word in cbs %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class='subcard nbc'>
+                <h3>NBC Top Keywords</h3>
+                <ol>
+                    {% for word in nbc %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            <div class='subcard abc'>
+                <h3>ABC Top Keywords</h3>
+                <ol>
+                    {% for word in abc %}
+                    <li>{{ word.word }}({{ word.count }})({{ word.date }})</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </body>
+</html>

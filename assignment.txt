@@ -1,0 +1,39 @@
+BACK END
+
+1. Orgs should be scraped at the same time daily and word could should be collected.
+
+SCRAPING filter
+
+1. Using bs4
+2. using re.findall()
+
+
+
+HARD
+
+1.there should be an admin section to filter keywords that are tracked. it will have a list of all the top words with X's beside them to add them to to the 'boring words' list.
+
+
+
+
+FRONT END
+
+EASY
+
+1.display graph showing one keyword over time from one org.
+2.user should be able to change the org and keyword
+
+MEDIUM
+
+1.display graph showing multiple keyword over time from one org
+2. user should be able to choose up to 5 keywords from one org
+
+MEDIUM2
+
+1.display graph showing one keyword from multiple orgs. 
+2. user should be able to choose up to all orgs and one keyword
+
+HARD
+
+1.display graph showing multiple words from multiple orgs
+2.user should be able to choose any word from any org 

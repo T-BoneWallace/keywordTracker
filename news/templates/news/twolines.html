@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Keyword Tracker</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'news/canvasjs.min.js' %}"></script>
+        <script>
+
+            //add additional fields to form
+            var keywordcount = 1
+
+            function addKeyword() {
+                keywordcount++;
+                var form = document.getElementById('newformdiv');
+                
+                var newinput = document.createElement('input');
+                newinput.setAttribute("type", "text");
+                newinput.setAttribute("name", "keyword")
+                form.append(newinput);
+                
+                console.log("new input added")
+                
+            }
+        </script>
+        <style>
+            input {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div>{{ chartdata }}</div>
+        <div>{{ chartdata2 }}</div>
+        <div>{{ org }}</div>
+        <div>{{ keywords }}</div>
+        <h1>Keyword Tracker Pro</h1>
+
+        <form id="form" method="post" action="/sampledouble">
+            {% csrf_token %}
+            
+            <select name="org" onchange="checkorg()">
+                <option value="https://cbc.ca/news">CBC</option>
+                <option value="https://ctvnews.ca">CTV</option>
+                <option value="https://globalnews.ca">Global</option>
+                <option value="https://cbsnews.com">CBS</option>
+                <option value="https://nbcnews.com">NBC</option>
+                <option value="https://abcnews.go.com">ABC</option>
+                <option value="all">All Orgs</option>
+            </select>
+            <input type="text" name="keyword">
+            <div id="newformdiv"></div>
+            <button onclick="addKeyword()" type="button">Add Keyword</button>
+            <button type="submit">Submit</button>
+            
+        </form>
+
+        <div id="chartContainer" style="height: 370px; max-width: 920px; margin: 0px auto;"></div>
+
+        {{ chartdata|json_script:'classdata' }}
+        <script id="classdata" type="application/json"></script>
+
+        {{ chartdata2|json_script:'classdata2' }}
+        <script id="classdata2" type="application/json"></script>
+
+
+        <script type="text/javascript">
+            var chartdata =  JSON.parse(document.getElementById('classdata').textContent);
+            var chartdata2 =  JSON.parse(document.getElementById('classdata2').textContent);
+            
+            
+
+            var keyword = '{{ keyword }}'
+            var keyword2 = '{{ keyword2 }}'
+
+            var dataPoints = [];
+            var dataPoints2 = []
+
+            window.onload = function () {
+            
+
+            
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Keyword Tracker"
+                },
+                axisX: {
+                    title: "Date"
+                },
+                axisY: {
+                    title: "Number of times mentioned",
+                },
+                toolTip: {
+                    shared: true
+                },
+                theme: "light1",
+                legend: {
+                    cursor: "pointer",
+                    verticalAlign: "top",
+                    horizontalAlign: "center",
+                    dockInsidePlotArea: true,
+                    itemclick: toogleDataSeries
+                },
+                data: [{
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: `${keyword} Count `,
+                    showInLegend: true,
+                    dataPoints: dataPoints
+                },
+                {   axisYType: "secondary",
+		            showInLegend: true,
+		            markerSize: 0,
+		            yValueFormatString: "#,###",
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: `${keyword2} Count `,
+                    showInLegend: true,
+                    dataPoints: dataPoints2
+                }]
+            });
+
+
+            
+
+            function addData(chartdata) {
+                for (i = 0; i < chartdata.length; i++) {
+                    dataPoints.push({
+                        label: chartdata[i]['date'],
+                        y: chartdata[i]['y']
+                    });
+                }
+                console.log('data added')
+                chart.render()
+            }
+
+            function addData2(chartdata2) {
+                for (i = 0; i < chartdata2.length; i++) {
+                    dataPoints2.push({
+                        label: chartdata2[i]['date'],
+                        y: chartdata2[i]['y']
+                    });
+                }
+                console.log('data added 2')
+                chart.render()
+            }
+            
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                chart.render();
+            }
+            addData(chartdata);
+            addData2(chartdata2);
+            }
+            </script>
+    </body>
+</html>

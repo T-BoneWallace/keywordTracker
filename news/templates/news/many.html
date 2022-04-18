@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Keyword Tracker MAX</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{% static 'news/canvasjs.min.js' %}"></script>
+        <script>
+
+            //add additional fields to form
+            var keywordcount = 1
+
+            function addKeyword() {
+                
+
+                keywordcount++;
+                var form = document.getElementById('newformdiv');
+                const select = document.getElementById('orgOptions');
+                
+                var newinput = document.createElement('input');
+                var newSelect = select.cloneNode(true);
+                var inputDiv = document.createElement('div');
+                newinput.setAttribute("type", "text");
+                newinput.setAttribute("name", "keyword")
+                newinput.setAttribute("placeholder", "keyword")
+                inputDiv.append(newinput);
+                inputDiv.appendChild(newSelect);    
+                form.appendChild(inputDiv);      
+            }
+        </script>
+        <style>
+            h1 {
+                text-align: center;
+            }
+
+            #keywordinputarea {
+                height: 150px;
+            }
+
+            form { 
+                float: right;
+                width: 40%;
+                height: 100%;
+            }
+            input {
+                margin: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Keyword Tracker MAX</h1>
+        <!--
+        <div><h2>orgs:</h2>{{ org }}</div>
+        <hr>
+        <div><h2>Keywords</h2>{{ keyword }}</div>
+        <hr>
+        <div><h2>EntryList:</h2>{{ entryList }}</div>
+        <hr>
+        <div><h2>Chartdata:</h2>{{ chartdata }}</div>
+      -->
+      <div id="keywordinputarea">
+                
+
+
+        <form id="form" method="post" action="/samplelist">
+            {% csrf_token %}
+            
+            <div>
+                <input id="keyword1" type="text" name="keyword" placeholder="keyword"> 
+                <select name="org" onchange="checkorg()" id="orgOptions">
+                    <option value="cbs">CBS</option>
+                    <option value="cbc">CBC</option>
+                    <option value="ctv">CTV</option>
+                    <option value="https://globalnews.ca">Global</option>
+                    <option value="nbc">NBC</option>
+                    <option value="https://abcnews.go.com">ABC</option>
+                    <option value="all">All Orgs</option>
+                </select>
+            </div>
+            <div>
+                <input type="text" name="keyword" placeholder="keyword">
+                <select name="org" onchange="checkorg()" id="orgOptions">
+                    <option value="cbs">CBS</option>
+                    <option value="cbc">CBC</option>
+                    <option value="ctv">CTV</option>
+                    <option value="https://globalnews.ca">Global</option>
+                    <option value="nbc">NBC</option>
+                    <option value="abc">ABC</option>
+                    <option value="all">All Orgs</option>
+                </select>
+            </div>
+            <div>
+                <input type="text" name="keyword" placeholder="keyword">
+                <select name="org" onchange="checkorg()" id="orgOptions">
+                    <option value="cbs">CBS</option>
+                    <option value="cbc">CBC</option>
+                    <option value="ctv">CTV</option>
+                    <option value="https://globalnews.ca/">Global</option>
+                    <option value="nbc">NBC</option>
+                    <option value="abc">ABC</option>
+                    <option value="all">All Orgs</option>
+                </select>
+            </div>
+
+            <div id="newformdiv"></div>
+            <button onclick="addKeyword()" type="button">Add Keyword</button>
+            
+            <button type="submit">Submit</button>
+            
+        </form>
+        <p><strong>Keywords:</strong>keywords = [
+
+            'russia', 'ukraine', 'china', 'korea', 'iran', 'syria', 'brazil',
+        
+            'trump','putin','biden', 'trudeau', 'hillary', 'kanye', 'fauchi', 'yang',
+        
+            'inflation', 'gas', 'food', 'nuclear', 'prepare', 'disaster', 'grain', 'wheat', 'warning',
+            'bitcoin', 'crypto', 'war',
+        
+            'covid', 'wave', 'varient', 'omicron', 'vaccine', 'restrictions', 'myocarditis', 'curfew', 'quarantine', 
+            
+            'fentanyl', 'epidemic',  'opioid', 'crisis',
+        
+            'climate', 'pipeline', 'carbon',
+            
+            'secret', 'spicy', 'underground', 'marijuana', 'cannabis', 'new', 'e-bike', 'nasa', 'webb', 'telescope',  'dogs', 'dog', 'cat', 'cats', 'snake', 'snakes', 'gun', 'guns', 'tiger', 'penis', 'freedom',]</p>
+    </div>
+
+
+        <div id="chartContainer" style="height: 700px; max-width: 100%; margin: 0px auto;"></div>
+
+        {{ chartdata|json_script:'classdata' }}
+        <script id="classdata" type="application/json"></script>
+
+        {{ keyword|json_script:'keywords' }}
+        <script id="keywords" type="application/json"></script>
+
+
+        <script type="text/javascript">
+
+            var chartdata =  JSON.parse(document.getElementById('classdata').textContent);
+            var keywords = JSON.parse(document.getElementById('keywords').textContent);
+            var placeholdernames = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            for (i = 0; i < keywords.length; i++) {
+                placeholdernames[i] = `${keywords[i]['word']} - ${keywords[i]['org']}`;
+            }
+            
+            var dataPoints = [];
+
+            window.onload = function () {
+            
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: 'Maxxx'
+                },
+                axisX: {
+                    title: "Date"
+                },
+                axisY: {
+                    title: "Number of times mentioned",
+                },
+                toolTip: {
+                    shared: true
+                },
+                theme: "light2",
+                legend: {
+                    cursor: "pointer",
+                    verticalAlign: "top",
+                    horizontalAlign: "center",
+                    dockInsidePlotArea: false,
+                    itemclick: toogleDataSeries
+                },
+                data: [{
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[0],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[1],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[2],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[3],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[4],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[5],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[6],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[7],
+                    showInLegend: true,
+                    dataPoints: []
+                },
+                {
+                    indexLabelFontSize: 25,
+                    indexLabelFontFamily:"Lucida Console" ,
+                    type:"line",
+                    name: placeholdernames[8],
+                    showInLegend: true,
+                    dataPoints: []
+                }]
+            });
+
+
+            
+
+            function addData(chartdata) {
+
+                for (i = 0; i < chartdata.length; i++) {
+                    for (j = 0; j < chartdata[i].length; j++){
+
+                        chart.options.data[i].dataPoints.push({
+                        label: chartdata[i][j]['date'],
+                        y: chartdata[i][j]['y']
+                    }); // Add a new dataPoint to dataPoints array
+                    //chart.options.data[i].name = keywords[i]
+                    }
+                    
+                }
+                console.log('data added')
+            }
+            
+            function toogleDataSeries(e){
+                if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else{
+                    e.dataSeries.visible = true;
+                }
+                chart.render();
+            }
+            addData(chartdata);
+            chart.render()
+            }
+            </script>
+    </body>
+</html>
